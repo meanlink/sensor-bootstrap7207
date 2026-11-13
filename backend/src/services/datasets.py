@@ -12,6 +12,10 @@ def create(db, data):
     for index,row in enumerate(data.records):
         for c in metadata()['columns']:
             value=row.get(c['key'])
+            if c.get('optional'):
+                if value is None or (isinstance(value,str) and not value.strip()):
+                    row[c['key']]=''
+                continue
             if value is None or value=='': raise HTTPException(422, f'第 {index+1} 行缺少字段 {c["label"]}')
             if c['type']=='number':
                 try:
